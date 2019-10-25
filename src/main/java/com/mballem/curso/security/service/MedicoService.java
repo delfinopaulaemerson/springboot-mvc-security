@@ -1,0 +1,41 @@
+package com.mballem.curso.security.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.mballem.curso.security.domain.Medico;
+import com.mballem.curso.security.repository.MedicoRepository;
+
+@Service
+public class MedicoService {
+	
+	@Autowired
+	private MedicoRepository repository;
+	
+	
+	@Transactional(readOnly = true)
+	public Medico findByUsuarioId(Long id) {
+		return this.repository.findByUsuarioId(id).orElse(new Medico());
+	}
+
+
+	@Transactional(readOnly = false)
+	public void save(Medico medico) {
+		this.repository.save(medico);
+		
+	}
+
+	@Transactional(readOnly = false)
+	public void update(Medico medico) {
+		Medico m2 = this.repository.findById(medico.getId()).get();
+		m2.setCrm(medico.getCrm());
+		m2.setNome(medico.getNome());
+		m2.setDtInscricao(medico.getDtInscricao());
+		
+		if(!medico.getEspecialidades().isEmpty()) {
+			m2.getEspecialidades().addAll(medico.getEspecialidades());
+		}
+	}
+
+}
